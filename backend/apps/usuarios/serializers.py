@@ -15,15 +15,22 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'rol', 'prioridad',
             'password',
         ]
+        extra_kwargs = {
+            'rol': {'required': True},
+        }
+    def validate_rol(self, value):
+        roles_validos = ['admin', 'trabajador', 'cliente']
+        if value not in roles_validos:
+            raise serializers.ValidationError(f"Rol inválido. Debe ser uno de: {', '.join(roles_validos)}.")
+        return value
 
     def create(self, validated_data):
-        # Usa el manager de Django para crear y hashear contraseña
         return User.objects.create_user(
             username   = validated_data['username'],
             correo     = validated_data['correo'],
             password   = validated_data['password'],
-            first_name = validated_data.get('nombre'),
-            last_name  = validated_data.get('apellido'),
+            nombre     = validated_data['nombre'],
+            apellido   = validated_data['apellido'],
             rol        = validated_data.get('rol', 'trabajador'),
             prioridad  = validated_data.get('prioridad', 1),
         )

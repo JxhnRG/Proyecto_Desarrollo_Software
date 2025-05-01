@@ -7,12 +7,23 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UsuarioSerializer
 from django.contrib.auth import get_user_model
 
+
 User = get_user_model()
 
 class RegisterUsuarioView(generics.CreateAPIView):
     queryset         = User.objects.all()
     serializer_class = UsuarioSerializer
     permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request, *args, **kwargs):
+        if request.user.rol != 'admin':
+            return Response({'error': 'Solo los administradores pueden crear usuarios.'},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        usuario = serializer.save()
+        return Response(UsuarioSerializer(usuario).data, status=status.HTTP_201_CREATED)
 
 class LoginUsuarioView(APIView):
     def post(self, request):
