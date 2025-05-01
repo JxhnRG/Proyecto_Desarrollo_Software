@@ -47,7 +47,7 @@ El sistema ofrece una página de acceso principal desde donde los usuarios puede
 - **Ruta**: [`/accesocliente`](http://localhost:3000/accesocliente)
 - Formulario con un único campo: **Cédula** (no requiere contraseña).
 - Después de una autenticación exitosa:
-  - **Ruta de Redirección**: Página de gestión de solicitudes de turnos para clientes (se *debe* completar).
+  - **Ruta de Redirección**: Página de gestión de solicitudes de turnos para clientes (se **debe** completar).
 
 ### Registro de Clientes
 
