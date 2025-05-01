@@ -35,6 +35,8 @@ const Login = () => {
 
       if (data.user.rol === 'admin') {
         window.location.href = '/#/creartrabajador'
+      } else if (data.user.rol === 'trabajador') {
+        window.location.href = '/#/gestionturnos'
       } else {
         window.location.href = '/#/dashboard'
       }

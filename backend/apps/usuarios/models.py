@@ -13,7 +13,6 @@ class Usuario(AbstractUser):
     rol = models.CharField(max_length=20, choices=ROLES)
     prioridad = models.IntegerField(default=1)
 
-    # Este campo reemplaza al username por correo
     USERNAME_FIELD = 'correo'
     REQUIRED_FIELDS = ['username', 'rol']
 

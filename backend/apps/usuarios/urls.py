@@ -1,4 +1,3 @@
-# apps/usuarios/urls.py
 from django.urls import path
 from .views import RegisterUsuarioView, LoginUsuarioView
 
