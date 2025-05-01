@@ -21,7 +21,7 @@ El sistema ofrece una página de acceso principal desde donde los usuarios puede
 
 ### Inicio de Sesión
 
-- **Ruta**: [`/login-trabajador`](http://localhost:3000/login)
+- **Ruta**: [`/login`](http://localhost:3000/login)
 - Autenticación mediante **usuario** y **contraseña**.
 - Después de una autenticación exitosa:
   - Redirección a la página de gestión de turnos del trabajador: [`/gestionar-turnos`](http://localhost:3000/gestionar-turnos) (en desarrollo). (cabe aclarar que esto todavia no se implementa.)
@@ -29,7 +29,7 @@ El sistema ofrece una página de acceso principal desde donde los usuarios puede
 ### Registro de Trabajadores
 
 - Solo accesible para usuarios con rol de **admin**.
-- **Ruta**: [`/crear-trabajador`](http://localhost:3000/creartrabajador)
+- **Ruta**: [`/creartrabajador`](http://localhost:3000/creartrabajador)
 - Campos del formulario:
   - Correo electrónico
   - Usuario
@@ -44,14 +44,14 @@ El sistema ofrece una página de acceso principal desde donde los usuarios puede
 
 ### Inicio de Sesión para Clientes
 
-- **Ruta**: [`/login-cliente`](http://localhost:3000/accesocliente)
+- **Ruta**: [`/accesocliente`](http://localhost:3000/accesocliente)
 - Formulario con un único campo: **Cédula** (no requiere contraseña).
 - Después de una autenticación exitosa:
   - **Ruta de Redirección**: Página de gestión de solicitudes de turnos para clientes (se *debe* completar).
 
 ### Registro de Clientes
 
-- **Ruta**: [`/registro-cliente`](http://localhost:3000/registroclientes)
+- **Ruta**: [`/registroclientes`](http://localhost:3000/registroclientes)
 - Disponible para clientes no registrados.
 - Campos del formulario:
   - Nombre
