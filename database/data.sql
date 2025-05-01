@@ -1,3 +1,5 @@
+\c proy_desarrollo
+
 INSERT INTO usuarios (nombre, apellido, correo, contrasena, rol, prioridad)
 VALUES 
 ('Ana', 'Pérez', 'ana.perez@example.com', 'hash1', 'cliente', 'normal'),

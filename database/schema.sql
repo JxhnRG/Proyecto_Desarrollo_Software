@@ -1,3 +1,5 @@
+\c proy_desarrollo
+
 -- Roles predefinidos: admin, operador, cliente
 CREATE TYPE tipo_rol AS ENUM ('admin', 'operador', 'cliente');
 CREATE TYPE tipo_prioridad AS ENUM ('alta', 'normal');
