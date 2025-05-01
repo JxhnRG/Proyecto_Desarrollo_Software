@@ -9,8 +9,8 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class RegisterUsuarioView(generics.CreateAPIView):
-    queryset         = User.objects.all()
+class AdminRegistrarUsuarioView(generics.CreateAPIView):
+    queryset    = User.objects.all()
     serializer_class = UsuarioSerializer
     permission_classes = [permissions.IsAdminUser]
 
@@ -23,6 +23,21 @@ class RegisterUsuarioView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         usuario = serializer.save()
         return Response(UsuarioSerializer(usuario).data, status=status.HTTP_201_CREATED)
+    
+class RegistroClientePublicoView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UsuarioSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['rol'] = 'cliente'  
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        usuario = serializer.save()
+        return Response(UsuarioSerializer(usuario).data, status=status.HTTP_201_CREATED)
+
 
 class LoginUsuarioView(APIView):
     def post(self, request):

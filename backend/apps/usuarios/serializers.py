@@ -31,5 +31,5 @@ class UsuarioSerializer(serializers.ModelSerializer):
             nombre     = validated_data['nombre'],
             apellido   = validated_data['apellido'],
             rol        = validated_data.get('rol', 'trabajador'),
-            prioridad  = validated_data.get('prioridad', 1),
+            prioridad  = validated_data.get('prioridad', False),
         )

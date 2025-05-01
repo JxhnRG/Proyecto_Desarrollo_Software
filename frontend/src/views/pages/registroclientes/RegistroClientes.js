@@ -10,21 +10,18 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-  CFormSelect,
-  CFormCheck
+  CFormCheck,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
+import { cilUser, cilAddressBook, cilEnvelopeClosed } from '@coreui/icons'
 import axios from 'axios'
 
-const CrearTrabajador = () => {
+const RegistroCliente = () => {
   const [formData, setFormData] = useState({
-    correo: '',
-    username: '',
-    password: '',
+    cedula: '',
     nombre: '',
     apellido: '',
-    rol: 'trabajador',
+    correo: '',
   })
 
   const [error, setError] = useState(null)
@@ -37,18 +34,25 @@ const CrearTrabajador = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const username = `cliente_${formData.cedula}`
+    const password = 'cliente123'
+    const rol = 'cliente'
+
+    const finalData = {
+      ...formData,
+      username,
+      password,
+      rol,
+    }
+
     try {
-      const token = localStorage.getItem('accessToken')
-      console.log('Token:', token)
-      await axios.post('http://localhost:8000/api/usuarios/admin/registrar/', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      setSuccess('Usuario creado exitosamente')
+      await axios.post('http://localhost:8000/api/usuarios/registro/', finalData)
+      setSuccess('Cliente registrado correctamente')
       setError(null)
+      window.location.href = '/#/accesocliente'
     } catch (err) {
-      setError('Error al crear el usuario')
+      setError('Error al registrar el cliente')
       setSuccess(null)
     }
   }
@@ -61,33 +65,8 @@ const CrearTrabajador = () => {
             <CCard className="mx-4">
               <CCardBody className="p-4">
                 <CForm onSubmit={handleSubmit}>
-                  <h1>Crear Trabajador</h1>
-                  <p className="text-body-secondary">Completa la información</p>
-
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>@</CInputGroupText>
-                    <CFormInput
-                      placeholder="Correo"
-                      name="correo"
-                      value={formData.correo}
-                      onChange={handleChange}
-                      type="email"
-                      required
-                    />
-                  </CInputGroup>
-
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <CIcon icon={cilUser} />
-                    </CInputGroupText>
-                    <CFormInput
-                      placeholder="Username"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleChange}
-                      required
-                    />
-                  </CInputGroup>
+                  <h1>Registro de Cliente</h1>
+                  <p className="text-body-secondary">Ingrese sus datos para registrarse</p>
 
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
@@ -117,33 +96,47 @@ const CrearTrabajador = () => {
 
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
-                      <CIcon icon={cilLockLocked} />
+                      <CIcon icon={cilAddressBook} />
                     </CInputGroupText>
                     <CFormInput
-                      type="password"
-                      placeholder="Contraseña"
-                      name="password"
-                      value={formData.password}
+                      placeholder="Cédula"
+                      name="cedula"
+                      value={formData.cedula}
                       onChange={handleChange}
                       required
                     />
                   </CInputGroup>
 
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>Rol</CInputGroupText>
-                    <CFormSelect name="rol" value={formData.rol} onChange={handleChange}>
-                      <option value="admin">Admin</option>
-                      <option value="trabajador">Trabajador</option>
-                      <option value="cliente">Cliente</option>
-                    </CFormSelect>
+                  <CInputGroup className="mb-4">
+                    <CInputGroupText>
+                      <CIcon icon={cilEnvelopeClosed} />
+                    </CInputGroupText>
+                    <CFormInput
+                      type="email"
+                      placeholder="Correo Electrónico"
+                      name="correo"
+                      value={formData.correo}
+                      onChange={handleChange}
+                      required
+                    />
                   </CInputGroup>
+
+                  <div className="mb-3 form-check form-switch">
+                    <CFormCheck
+                      type="checkbox"
+                      name="prioridad"
+                      checked={formData.prioridad}
+                      onChange={(e) => setFormData({ ...formData, prioridad: e.target.checked })}
+                      label="¿Prioridad?"
+                    />
+                  </div>
 
                   {error && <p className="text-danger">{error}</p>}
                   {success && <p className="text-success">{success}</p>}
 
                   <div className="d-grid">
-                    <CButton type="submit" color="success">
-                      Crear Cuenta
+                    <CButton type="submit" color="primary">
+                      Registrarse
                     </CButton>
                   </div>
                 </CForm>
@@ -156,4 +149,4 @@ const CrearTrabajador = () => {
   )
 }
 
-export default CrearTrabajador
+export default RegistroCliente
