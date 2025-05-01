@@ -15,7 +15,7 @@ class Usuario(AbstractUser):
 
     # Este campo reemplaza al username por correo
     USERNAME_FIELD = 'correo'
-    REQUIRED_FIELDS = ['username, rol']
+    REQUIRED_FIELDS = ['username', 'rol']
 
     def __str__(self):
         return self.correo
