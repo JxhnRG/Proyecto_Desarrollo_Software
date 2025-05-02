@@ -35,7 +35,7 @@ const RegistroCliente = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const username = `cliente_${formData.cedula}`
+    const username = formData.cedula
     const password = 'cliente123'
     const rol = 'cliente'
 

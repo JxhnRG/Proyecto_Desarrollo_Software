@@ -1,13 +1,30 @@
 import React, { useState } from 'react'
-import { CButton, CCard, CCardBody, CCol, CContainer, CForm, CFormInput, CRow } from '@coreui/react'
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCol,
+  CContainer,
+  CForm,
+  CFormInput,
+  CRow
+} from '@coreui/react'
+import axios from 'axios'
 
 const AccesoCliente = () => {
   const [cedula, setCedula] = useState('')
+  const [error, setError] = useState(null)
 
-  const manejarAcceso = (e) => {
+  const manejarAcceso = async (e) => {
     e.preventDefault()
-    // Aquí va la lógica de verificación (por ahora solo redirigimos)
-    window.location.href = '/#/solicitar-turno'
+
+    try {
+      await axios.post('http://localhost:8000/api/tickets/crear/', { cedula: cedula })
+      window.location.href = '/#/lista-de-tickets'
+    } catch (err) {
+      setError('Error al crear el ticket. Verifica la cédula.')
+      console.error(err)
+    }
   }
 
   const irARegistro = () => {
@@ -30,6 +47,7 @@ const AccesoCliente = () => {
                     placeholder="Ingrese su cédula"
                     required
                   />
+                  {error && <p className="text-danger mt-2">{error}</p>}
                   <div className="d-grid gap-2 mt-3">
                     <CButton type="submit" color="success">Continuar</CButton>
                     <CButton type="button" color="secondary" onClick={irARegistro}>
