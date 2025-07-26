@@ -22,6 +22,9 @@ const RegistroCliente = () => {
     nombre: '',
     apellido: '',
     correo: '',
+    fecha_nacimiento: '',
+    discapacidad: false,
+    prioridad: false,
   })
 
   const [error, setError] = useState(null)
@@ -120,6 +123,16 @@ const RegistroCliente = () => {
                       required
                     />
                   </CInputGroup>
+                    <CInputGroup className="mb-3">
+                     <CInputGroupText>Fecha de Nacimiento</CInputGroupText>
+                       <CFormInput
+                        type="date"
+                        name="fecha_nacimiento"
+                        value={formData.fecha_nacimiento}
+                        onChange={handleChange}
+                        required
+                      />
+                    </CInputGroup>
 
                   <div className="mb-3 form-check form-switch">
                     <CFormCheck

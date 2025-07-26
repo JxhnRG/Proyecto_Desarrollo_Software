@@ -1,6 +1,10 @@
 from django.urls import path
-from .views import CrearTicketPorCedulaView
+from apps.tickets.views import CrearTicketAPIView, ListarMisTicketsView, CrearTurnoView
+
 
 urlpatterns = [
-    path('crear/', CrearTicketPorCedulaView.as_view(), name='crear-tickets-cedula'),
+    path('crear/', CrearTicketAPIView.as_view(), name='crear-ticket'),  # 👈 Cambiado
+    path('mis-tickets/', ListarMisTicketsView.as_view(), name='mis-tickets'),
+    path('crear-turno/', CrearTurnoView.as_view(), name='crear-turno'),
 ]
+

@@ -19,7 +19,7 @@ const AccesoCliente = () => {
     e.preventDefault()
 
     try {
-      await axios.post('http://localhost:8000/api/tickets/crear/', { cedula: cedula })
+      await axios.post('http://localhost:8000/api/tickets/crear-ticket/', { cedula: cedula })
       window.location.href = '/#/lista-de-tickets'
     } catch (err) {
       setError('Error al crear el ticket. Verifica la cédula.')

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'apps.punto_atencion',
 ]
 
 MIDDLEWARE = [
@@ -85,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'proy_desarrollo',
         'USER': 'postgres',
-        'PASSWORD': 'projectds',
+        'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '5432',
     }
