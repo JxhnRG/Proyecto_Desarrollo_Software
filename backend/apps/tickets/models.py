@@ -12,6 +12,7 @@ class Ticket(models.Model):
         ('esperando', 'Esperando'),
         ('atendiendo', 'Atendiendo'),
         ('finalizado', 'Finalizado'),
+        ('cancelado', 'Cancelado'),
     ]
 
     # ✅ Opciones descriptivas de prioridad (no se usan directamente en el campo `prioridad`)

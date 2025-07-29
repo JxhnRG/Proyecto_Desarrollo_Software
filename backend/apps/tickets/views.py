@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, timedelta 
 
+
 from apps.tickets.models import Ticket, Turno
 from apps.tickets.serializers import TicketSerializer, TurnoSerializer
 from apps.punto_atencion.models import PuntoAtencion
@@ -90,3 +91,7 @@ class CrearTurnoView(generics.CreateAPIView):
     queryset = Turno.objects.all()
     serializer_class = TurnoSerializer
     permission_classes = [permissions.IsAuthenticated]
+class ListarTodosLosTicketsView(generics.ListAPIView):
+    queryset = Ticket.objects.all().order_by('-fecha_emision')  # opcional: más recientes primero
+    serializer_class = TicketSerializer
+    permission_classes = []  # sin autenticación por ahora, puedes cambiar a [permissions.IsAdminUser]

@@ -37,7 +37,7 @@ const SalaDeEspera = () => {
                   <strong>{ticket.tiempo_espera} minutos</strong>
                 </p>
                 <p>🕒 Por favor espera tu llamado...</p>
-                <CButton color="primary" onClick={() => navigate('/seleccionacceso')}>
+                <CButton color="primary" onClick={() => navigate('/')}>
                   Volver al inicio
                 </CButton>
               </CCardBody>
