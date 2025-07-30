@@ -22,7 +22,8 @@ const Register = React.lazy(() => import('./views/pages/register/Register'))
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 const SalaDeEspera = React.lazy(() => import('./views/pages/salaespera/SalaDeEspera'))
-
+const Atencion = React.lazy(() => import('./views/pages/atencion/Atencion'))
+const FinalizarTicket = React.lazy(() => import('./views/pages/finalizarticket/FinalizarTicket'))
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
   const storedTheme = useSelector((state) => state.theme)
@@ -62,6 +63,9 @@ const App = () => {
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
           <Route path="*" name="Home" element={<DefaultLayout />} />
           <Route exact path="/sala-espera" name="Sala de Espera" element={<SalaDeEspera />} />
+          <Route exact path="/atencion" name="Atención" element={<Atencion />} />
+          <Route exact path="/ticket-finalizado" name="FinalizarTicket" element={<FinalizarTicket />} />
+
         </Routes>
       </Suspense>
     </HashRouter>

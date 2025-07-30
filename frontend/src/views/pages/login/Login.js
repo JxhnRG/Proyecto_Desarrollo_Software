@@ -40,6 +40,7 @@ const Login = () => {
 
       // 🔐 Guardamos el token y los datos del usuario en localStorage
       localStorage.setItem('accessToken', data.access)
+      localStorage.setItem('refreshToken', data.refresh)
       localStorage.setItem('rol', user.rol)
       localStorage.setItem('usuario', JSON.stringify({
         nombre: user.nombre,

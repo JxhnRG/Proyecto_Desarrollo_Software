@@ -2,55 +2,43 @@ import React, { useEffect, useState } from 'react'
 import { CButton, CCard, CCardBody, CCol, CContainer, CRow } from '@coreui/react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-/**
- * Componente de gestión de turnos
- * Permite al usuario autenticado generar un nuevo ticket
- */
 
 const GestionTurnos = () => {
-  const [nombre, setNombre] = useState('')  // Estado para guardar el nombre del usuario
+  const [nombre, setNombre] = useState('')
   const navigate = useNavigate()
+
   useEffect(() => {
-    // Al cargar el componente, obtenemos el nombre del usuario desde localStorage
     const storedUser = localStorage.getItem('usuario')
+
     if (storedUser) {
       const usuario = JSON.parse(storedUser)
       setNombre(usuario.nombre)
     }
+
   }, [])
 
-  /**
-   * Función que genera un nuevo ticket para el usuario autenticado
-   */
   const handleSeleccionarTurno = async () => {
-    const storedUser = localStorage.getItem('usuario')
     const token = localStorage.getItem('accessToken')
 
-    // Validación: usuario y token deben existir
-    if (!storedUser || !token) {
-      alert('No se encontró el usuario o el token.')
+    if (!token) {
+      alert('No se encontró el token.')
       return
     }
 
-    const usuario = JSON.parse(storedUser)
-
     try {
-      // Hacemos una petición POST para generar el ticket
       const response = await axios.post(
         'http://localhost:8000/api/tickets/crear/',
         {},
         {
           headers: {
-            Authorization: `Bearer ${token}`,  // 🔐 Autenticación con JWT
+            Authorization: `Bearer ${token}`,
           },
         }
       )
 
-      // ✅ Si se genera correctamente, mostramos la información
       const ticket = response.data
       navigate('/sala-espera', { state: ticket })
     } catch (error) {
-      // 🚨 En caso de error, lo mostramos al usuario
       console.error(error)
       const mensaje = error.response?.data?.error || 'Error desconocido'
       alert(`Error al generar el ticket:\n${mensaje}`)

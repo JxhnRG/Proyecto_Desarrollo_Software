@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from apps.punto_atencion.models import PuntoAtencion
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()  # ✅ Usamos el modelo de usuario personalizado
 
@@ -12,6 +14,7 @@ class Ticket(models.Model):
         ('esperando', 'Esperando'),
         ('atendiendo', 'Atendiendo'),
         ('finalizado', 'Finalizado'),
+        ('cancelado', 'Cancelado'),
     ]
 
     # ✅ Opciones descriptivas de prioridad (no se usan directamente en el campo `prioridad`)
@@ -37,7 +40,8 @@ class Ticket(models.Model):
 
     # ✅ Si el ticket tiene prioridad (True = prioritaria, False = normal)
     prioridad = models.BooleanField(default=False)
-
+    # Descripcion del problema
+    descripcion = models.TextField(null=True, blank=True)
     def __str__(self):
         return self.codigo_ticket  # ✅ Muestra el código al imprimir el objeto
 
@@ -64,4 +68,25 @@ class Turno(models.Model):
 
     def __str__(self):
         return f'Turno {self.pk} - Ticket {self.ticket.codigo_ticket}'  # ✅ Representación legible
+    # ✅ Método que calcula el tiempo transcurrido desde el inicio
+    def tiempo_transcurrido(self):
+        if self.hora_inicio_atencion:
+            fin = self.hora_fin_atencion or timezone.now()
+            return fin - self.hora_inicio_atencion
+        return timedelta(0)
 
+    # ✅ Método que finaliza el turno si han pasado más de 5 minutos
+    def finalizar_si_expirado(self):
+        if (
+            self.hora_inicio_atencion 
+            and not self.hora_fin_atencion 
+            and self.tiempo_transcurrido() >= timedelta(minutes=5)
+        ):
+            self.hora_fin_atencion = timezone.now()
+            self.save()
+
+            # Marcar el ticket como finalizado
+            self.ticket.estado = 'finalizado'
+            self.ticket.save()
+            return True
+        return False
