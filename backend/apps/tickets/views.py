@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from django.utils import timezone
 from datetime import date, timedelta 
 
-
 from apps.tickets.models import Ticket, Turno
 from apps.tickets.serializers import TicketSerializer, TurnoSerializer
 from apps.punto_atencion.models import PuntoAtencion
@@ -23,7 +22,7 @@ def calcular_tiempo_espera(ticket):
     # Tiempo estimado: 5 minutos por persona en fila
     tiempo_estimado = timedelta(minutes=5 * tickets_adelante)
     return tiempo_estimado
-# ✅ Vista para crear un ticket asociado al usuario autenticado
+
 # ✅ Vista para crear un ticket asociado al usuario autenticado
 class CrearTicketAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]  # ✅ Requiere autenticación
@@ -97,9 +96,6 @@ class CrearTicketAPIView(APIView):
             'tiempo_espera_segundos': segundos_espera
         }, status=201)
 
-
-
-
 # ✅ Vista para listar los tickets del usuario autenticado
 class ListarMisTicketsView(generics.ListAPIView):
     serializer_class = TicketSerializer
@@ -108,14 +104,13 @@ class ListarMisTicketsView(generics.ListAPIView):
     def get_queryset(self):
         return Ticket.objects.filter(usuario=self.request.user)
 
-
 # ✅ Vista para crear un nuevo turno (CreateAPIView ya maneja el post)
 class CrearTurnoView(generics.CreateAPIView):
     queryset = Turno.objects.all()
     serializer_class = TurnoSerializer
     permission_classes = [permissions.IsAuthenticated]
-<<<<<<< HEAD
-# Nueva vista para verificar el turno activo y cerrarlo si han pasado 5 minutos
+
+# ✅ Vista para verificar el turno activo y cerrarlo si han pasado 5 minutos
 class VerificarTurnoActivoAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -153,7 +148,8 @@ class VerificarTurnoActivoAPIView(APIView):
             "turno": TurnoSerializer(turno).data,
             "expirado": False
         }, status=200)
-# En views.py
+
+# ✅ Método para cambiar el estado de un ticket de 'esperando' a 'finalizado'
 class FinalizarMiTicketAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -170,6 +166,16 @@ class FinalizarMiTicketAPIView(APIView):
         ticket.descripcion = problema  
         ticket.save()
         return Response({'mensaje': 'Ticket finalizado correctamente'}, status=200)
-=======
 
->>>>>>> 3daaf74a9b7d37d32a2e8c0cc31b3538c653cf7c
+# ✅ Método para cambiar el estado de un ticket de 'esperando' a 'cancelado'
+class CancelarMiTicketAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        ticket = Ticket.objects.filter(usuario=request.user, estado='esperando').first()
+        if not ticket:
+            return Response({'error': 'No tienes un ticket activo'}, status=404)
+
+        ticket.estado = 'cancelado'
+        ticket.save()
+        return Response({'mensaje': 'Ticket cancelado correctamente'}, status=200)

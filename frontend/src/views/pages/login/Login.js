@@ -52,13 +52,13 @@ const Login = () => {
 
       // 👉 Redireccionamos según el rol del usuario
       if (user.rol === 'admin') {
-        window.location.href = '/crear-trabajador'
+        window.location.href = '/#/creartrabajador'
       } else if (user.rol === 'trabajador') {
-        window.location.href = '/tickets'
+        window.location.href = '/#/gestionturnos'
       } else if (user.rol === 'cliente') {
-        window.location.href = '/gestion-turnos'
+        window.location.href = '/#/gestionturnos'
       } else {
-        window.location.href = '/dashboard'
+        window.location.href = '/#/dashboard'
       }
 
     } catch (err) {
@@ -141,13 +141,14 @@ const Login = () => {
                       className="mt-3"
                       active
                       tabIndex={-1}
-                      href="/register"
+                      href="#/register"
                     >
                       Registrarse
                     </CButton>
                   </div>
                 </CCardBody>
               </CCard>
+
             </CCardGroup>
           </CCol>
         </CRow>

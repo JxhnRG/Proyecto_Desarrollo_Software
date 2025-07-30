@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from "../../../axiosInstance"
+import api from '../../../axiosInstance'
 
-import {
-  CCard,
-  CCardBody,
-  CContainer,
-  CRow,
-  CCol,
-  CButton,
-} from '@coreui/react'
+import { CCard, CCardBody, CContainer, CRow, CCol, CButton } from '@coreui/react'
 
 const SalaDeEspera = () => {
   const [ticket, setTicket] = useState(null)
   const [tiempoRestante, setTiempoRestante] = useState(null)
+  const [yaAvisado, setYaAvisado] = useState(false) // ✅ bandera para evitar alerta duplicada
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -36,7 +30,6 @@ const SalaDeEspera = () => {
 
         const ultimoTicket = data[data.length - 1]
 
-        // ✅ Si el ticket ya está finalizado, redirigir
         if (ultimoTicket.estado === 'finalizado') {
           navigate('/ticket-finalizado')
           return
@@ -44,7 +37,6 @@ const SalaDeEspera = () => {
 
         setTicket(ultimoTicket)
 
-        // ⏱️ Calcular el tiempo estimado en segundos
         const segundos = (ultimoTicket.posicion_en_fila + 1) * 5 * 60
         setTiempoRestante(segundos)
       } catch (error) {
@@ -67,21 +59,26 @@ const SalaDeEspera = () => {
           eliminarTicketYRedirigir()
           return 0
         }
+
+        if (prev === 60 && !yaAvisado) {
+          alert('⚠️ Queda 1 minuto para tu atención. Por favor, prepárate.')
+          setYaAvisado(true)
+        }
+
         return prev - 1
       })
     }, 1000)
 
     return () => clearInterval(intervalo)
-  }, [tiempoRestante])
+  }, [tiempoRestante, yaAvisado])
 
-  const eliminarTicketYRedirigir = async () => {
+  const cancelarTicketYRedirigir = async () => {
     try {
-      await api.post('/tickets/finalizar-mi-ticket/')
-      alert('⏱️ Tu tiempo ha terminado. Serás redirigido.')
-      navigate('/atencion')
+      await api.post('/tickets/cancelar/')
+      navigate('/ticket-finalizado')
     } catch (error) {
-      console.error('Error al finalizar ticket automáticamente:', error)
-      navigate('/atencion')
+      console.error('Error al cancelar el ticket:', error)
+      navigate('/ticket-finalizado')
     }
   }
 
@@ -98,31 +95,26 @@ const SalaDeEspera = () => {
             <CCard>
               <CCardBody>
                 <h2>🎫 Sala de Espera</h2>
-                <p><strong>Tu código:</strong> {ticket.codigo_ticket}</p>
-                <p><strong>Sede asignada:</strong> {ticket.punto_nombre || 'No disponible'}</p>
-                <p><strong>Prioridad:</strong> {ticket.prioridad ? '✅ Sí' : '❌ No'}</p>
-                <p><strong>Posición en fila:</strong> {ticket.posicion_en_fila}</p>
+                <p>
+                  <strong>Tu código:</strong> {ticket.codigo_ticket}
+                </p>
+                <p>
+                  <strong>Sede asignada:</strong> {ticket.punto_nombre || 'No disponible'}
+                </p>
+                <p>
+                  <strong>Prioridad:</strong> {ticket.prioridad ? '✅ Sí' : '❌ No'}
+                </p>
+                <p>
+                  <strong>Posición en fila:</strong> {ticket.posicion_en_fila}
+                </p>
 
                 <p className="fs-4 mt-4">
-                  ⏳ Tiempo estimado restante: {minutos.toString().padStart(2, '0')}:{segundos.toString().padStart(2, '0')}
+                  ⏳ Tiempo estimado restante: {minutos.toString().padStart(2, '0')}:
+                  {segundos.toString().padStart(2, '0')}
                 </p>
-<<<<<<< HEAD
 
-                <CButton color="danger" onClick={eliminarTicketYRedirigir}>
+                <CButton color="danger" onClick={cancelarTicketYRedirigir}>
                   Cancelar turno
-=======
-                <p>Prioridad: {ticket.prioridad ? '✅ Sí' : '❌ No'}</p>
-                <p>
-                  Sede asignada: <strong>{ticket.sede || 'No disponible'}</strong>
-                </p>
-                <p>
-                  ⏱️ Tiempo estimado de espera:{' '}
-                  <strong>{ticket.tiempo_espera} minutos</strong>
-                </p>
-                <p>🕒 Por favor espera tu llamado...</p>
-                <CButton color="primary" onClick={() => navigate('/')}>
-                  Volver al inicio
->>>>>>> 3daaf74a9b7d37d32a2e8c0cc31b3538c653cf7c
                 </CButton>
               </CCardBody>
             </CCard>

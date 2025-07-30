@@ -1,13 +1,13 @@
-import { CButton, CCard, CCardBody, CCol, CContainer, CRow } from '@coreui/react'
 import React from 'react'
+import { CButton, CCard, CCardBody, CCol, CContainer, CRow } from '@coreui/react'
 
 const SeleccionAcceso = () => {
   const redirigirTrabajador = () => {
-    window.location.href = '/login'
+    window.location.href = '/#/login'
   }
 
   const redirigirCliente = () => {
-    window.location.href = '/acceso-cliente'
+    window.location.href = '/#/accesocliente'
   }
 
   return (

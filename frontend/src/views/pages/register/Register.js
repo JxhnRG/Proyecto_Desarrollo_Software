@@ -119,7 +119,7 @@ const Register = () => {
                     </CInputGroupText>
                     <CFormInput
                       name="username"
-                      placeholder="Cedula"
+                      placeholder="Usuario"
                       autoComplete="username"
                       value={formData.username}
                       onChange={handleChange}
