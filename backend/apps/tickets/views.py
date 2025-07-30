@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.utils import timezone
 from datetime import date, timedelta 
 
+
 from apps.tickets.models import Ticket, Turno
 from apps.tickets.serializers import TicketSerializer, TurnoSerializer
 from apps.punto_atencion.models import PuntoAtencion
@@ -113,6 +114,7 @@ class CrearTurnoView(generics.CreateAPIView):
     queryset = Turno.objects.all()
     serializer_class = TurnoSerializer
     permission_classes = [permissions.IsAuthenticated]
+<<<<<<< HEAD
 # Nueva vista para verificar el turno activo y cerrarlo si han pasado 5 minutos
 class VerificarTurnoActivoAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -168,3 +170,6 @@ class FinalizarMiTicketAPIView(APIView):
         ticket.descripcion = problema  
         ticket.save()
         return Response({'mensaje': 'Ticket finalizado correctamente'}, status=200)
+=======
+
+>>>>>>> 3daaf74a9b7d37d32a2e8c0cc31b3538c653cf7c

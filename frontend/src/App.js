@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { Suspense, useEffect } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -41,8 +42,15 @@ const App = () => {
 
     setColorMode(storedTheme)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+=======
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import routes from './routes'
+>>>>>>> 3daaf74a9b7d37d32a2e8c0cc31b3538c653cf7c
 
+function App() {
   return (
+<<<<<<< HEAD
     <HashRouter>
       <Suspense
         fallback={
@@ -69,6 +77,15 @@ const App = () => {
         </Routes>
       </Suspense>
     </HashRouter>
+=======
+    <Router>
+      <Routes>
+        {routes.map((route, idx) => {
+          return <Route key={idx} path={route.path} element={route.element} />
+        })}
+      </Routes>
+    </Router>
+>>>>>>> 3daaf74a9b7d37d32a2e8c0cc31b3538c653cf7c
   )
 }
 

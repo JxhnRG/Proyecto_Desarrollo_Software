@@ -106,9 +106,23 @@ const SalaDeEspera = () => {
                 <p className="fs-4 mt-4">
                   ⏳ Tiempo estimado restante: {minutos.toString().padStart(2, '0')}:{segundos.toString().padStart(2, '0')}
                 </p>
+<<<<<<< HEAD
 
                 <CButton color="danger" onClick={eliminarTicketYRedirigir}>
                   Cancelar turno
+=======
+                <p>Prioridad: {ticket.prioridad ? '✅ Sí' : '❌ No'}</p>
+                <p>
+                  Sede asignada: <strong>{ticket.sede || 'No disponible'}</strong>
+                </p>
+                <p>
+                  ⏱️ Tiempo estimado de espera:{' '}
+                  <strong>{ticket.tiempo_espera} minutos</strong>
+                </p>
+                <p>🕒 Por favor espera tu llamado...</p>
+                <CButton color="primary" onClick={() => navigate('/')}>
+                  Volver al inicio
+>>>>>>> 3daaf74a9b7d37d32a2e8c0cc31b3538c653cf7c
                 </CButton>
               </CCardBody>
             </CCard>
