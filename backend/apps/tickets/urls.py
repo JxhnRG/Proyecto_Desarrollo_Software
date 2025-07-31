@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.tickets.views import CrearTicketAPIView, ListarMisTicketsView, CrearTurnoView,VerificarTurnoActivoAPIView,FinalizarMiTicketAPIView
+from apps.tickets.views import CrearTicketAPIView, ListarMisTicketsView, CrearTurnoView,VerificarTurnoActivoAPIView,FinalizarMiTicketAPIView, ListarTodosLosTicketsView
 from apps.tickets.views import CancelarMiTicketAPIView 
 
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path('crear-turno/', CrearTurnoView.as_view(), name='crear-turno'),
     path('verificar-turno/', VerificarTurnoActivoAPIView.as_view(), name='verificar-turno'),
     path('finalizar-mi-ticket/', FinalizarMiTicketAPIView.as_view(), name='finalizar-ticket'),
-     path('cancelar/', CancelarMiTicketAPIView.as_view(), name='cancelar-ticket'),
+    path('cancelar/', CancelarMiTicketAPIView.as_view(), name='cancelar-ticket'),
+    path('', ListarTodosLosTicketsView.as_view(), name='listar_tickets'),
 ]
 

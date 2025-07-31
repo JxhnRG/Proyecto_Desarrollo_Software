@@ -179,3 +179,8 @@ class CancelarMiTicketAPIView(APIView):
         ticket.estado = 'cancelado'
         ticket.save()
         return Response({'mensaje': 'Ticket cancelado correctamente'}, status=200)
+
+class ListarTodosLosTicketsView(generics.ListAPIView):
+    queryset = Ticket.objects.all().order_by('-fecha_emision')  # opcional: más recientes primero
+    serializer_class = TicketSerializer
+    permission_classes = []  # sin autenticación por ahora, puedes cambiar a [permissions.IsAdminUser]  
