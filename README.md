@@ -16,7 +16,7 @@
       <li>Creamos el entorno virtual con el comando: <code>python3 -m venv venv</code></li>
       <li>Ejecutamos con el comando: <code>source venv/bin/activate</code></li>
     </ul>
-    <li>Instalamos los requerimientos: <code>pip install -r requirements.text</code></li>
+    <li>Instalamos los requerimientos: <code>pip install -r requirements.txt</code></li>
     <li>Creamos las migraciones con: <code>python3 manage.py makemigrations</code></li>
     <li>Hacemos la migracion: <code>python3 manage.py migrate</code></li>
     <li>Creamos el super usuario: <code>python3 manage.py createsuperuser</code></li>
