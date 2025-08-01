@@ -17,7 +17,6 @@ import { cilLockLocked, cilUser } from '@coreui/icons'
 
 // Componente de registro de usuario cliente
 const Register = () => {
-  // Estado del formulario
   const [formData, setFormData] = useState({
     username: '',
     nombre: '',
@@ -29,7 +28,6 @@ const Register = () => {
     discapacidad: false,
   })
 
-  // Manejador de cambios en los inputs
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prev) => ({
@@ -38,17 +36,14 @@ const Register = () => {
     }))
   }
 
-  // Manejador de envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // Validación: Contraseñas iguales
     if (formData.password !== formData.password2) {
       alert('Las contraseñas no coinciden')
       return
     }
 
-    // Datos a enviar a la API
     const payload = {
       username: formData.username,
       nombre: formData.nombre,
@@ -57,7 +52,7 @@ const Register = () => {
       password: formData.password,
       f_nacimiento: formData.f_nacimiento,
       discapacidad: formData.discapacidad,
-      rol: 'cliente', // Rol fijo
+      rol: 'cliente',
     }
 
     try {
@@ -90,7 +85,6 @@ const Register = () => {
                   <h1>Registro</h1>
                   <p className="text-body-secondary">Crea tu cuenta</p>
 
-                  {/* Campo: Nombre */}
                   <CInputGroup className="mb-3">
                     <CInputGroupText>Nombre</CInputGroupText>
                     <CFormInput
@@ -101,7 +95,6 @@ const Register = () => {
                     />
                   </CInputGroup>
 
-                  {/* Campo: Apellido */}
                   <CInputGroup className="mb-3">
                     <CInputGroupText>Apellido</CInputGroupText>
                     <CFormInput
@@ -112,7 +105,6 @@ const Register = () => {
                     />
                   </CInputGroup>
 
-                  {/* Campo: Nombre de usuario */}
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
@@ -126,7 +118,6 @@ const Register = () => {
                     />
                   </CInputGroup>
 
-                  {/* Campo: Correo */}
                   <CInputGroup className="mb-3">
                     <CInputGroupText>@</CInputGroupText>
                     <CFormInput
@@ -138,7 +129,6 @@ const Register = () => {
                     />
                   </CInputGroup>
 
-                  {/* Campo: Contraseña */}
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cilLockLocked} />
@@ -153,7 +143,6 @@ const Register = () => {
                     />
                   </CInputGroup>
 
-                  {/* Campo: Repetir contraseña */}
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cilLockLocked} />
@@ -168,7 +157,6 @@ const Register = () => {
                     />
                   </CInputGroup>
 
-                  {/* Campo: Fecha de nacimiento */}
                   <CInputGroup className="mb-3">
                     <CInputGroupText>Fecha de Nacimiento</CInputGroupText>
                     <CFormInput
@@ -179,7 +167,6 @@ const Register = () => {
                     />
                   </CInputGroup>
 
-                  {/* Checkbox: Discapacidad */}
                   <div className="mb-3">
                     <CFormCheck
                       type="checkbox"
@@ -199,6 +186,13 @@ const Register = () => {
                       Crear Cuenta
                     </CButton>
                   </div>
+
+                  {/* Botón para ir al login */}
+                  <div className="d-grid mt-2">
+                    <CButton color="secondary" variant="outline" onClick={() => window.location.href = '/'}>
+                      Ya tengo cuenta
+                    </CButton>
+                  </div>
                 </CForm>
               </CCardBody>
             </CCard>
@@ -210,3 +204,4 @@ const Register = () => {
 }
 
 export default Register
+

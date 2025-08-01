@@ -52,7 +52,7 @@ const Login = () => {
 
       // 👉 Redireccionamos según el rol del usuario
       if (user.rol === 'admin') {
-        window.location.href = '/#/creartrabajador'
+        window.location.href = '/#/seleccionadmin'
       } else if (user.rol === 'trabajador') {
         window.location.href = '/#/gestiontrabajador'
       } else if (user.rol === 'cliente') {

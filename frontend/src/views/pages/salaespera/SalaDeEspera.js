@@ -41,12 +41,12 @@ const SalaDeEspera = () => {
 
         setTicket(ultimoTicket)
 
-        // ⚠️ Reducido a 20 segundos para pruebas
-        const segundos = 20
+        // ⚠️ Reducido a 120 segundos para pruebas
+        const segundos = ultimoTicket.tiempo_estimado_segundos || 120
         setTiempoRestante(segundos)
       } catch (error) {
         console.error('Error al obtener ticket:', error)
-        navigate('/login')
+        navigate('/')
       }
     }
 

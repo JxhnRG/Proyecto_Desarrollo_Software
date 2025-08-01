@@ -15,8 +15,11 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilUser, cilAddressBook, cilEnvelopeClosed } from '@coreui/icons'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom' // 👈 Importación añadida
 
 const RegistroCliente = () => {
+  const navigate = useNavigate() // 👈 Hook para redireccionar
+
   const [formData, setFormData] = useState({
     cedula: '',
     nombre: '',
@@ -53,7 +56,7 @@ const RegistroCliente = () => {
       await axios.post('http://localhost:8000/api/usuarios/registro/', finalData)
       setSuccess('Cliente registrado correctamente')
       setError(null)
-      window.location.href = '/#/accesocliente'
+      window.location.href = '/'
     } catch (err) {
       setError('Error al registrar el cliente')
       setSuccess(null)
@@ -123,23 +126,26 @@ const RegistroCliente = () => {
                       required
                     />
                   </CInputGroup>
-                    <CInputGroup className="mb-3">
-                     <CInputGroupText>Fecha de Nacimiento</CInputGroupText>
-                       <CFormInput
-                        type="date"
-                        name="fecha_nacimiento"
-                        value={formData.fecha_nacimiento}
-                        onChange={handleChange}
-                        required
-                      />
-                    </CInputGroup>
+
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>Fecha de Nacimiento</CInputGroupText>
+                    <CFormInput
+                      type="date"
+                      name="fecha_nacimiento"
+                      value={formData.fecha_nacimiento}
+                      onChange={handleChange}
+                      required
+                    />
+                  </CInputGroup>
 
                   <div className="mb-3 form-check form-switch">
                     <CFormCheck
                       type="checkbox"
                       name="prioridad"
                       checked={formData.prioridad}
-                      onChange={(e) => setFormData({ ...formData, prioridad: e.target.checked })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, prioridad: e.target.checked })
+                      }
                       label="¿Prioridad?"
                     />
                   </div>
@@ -147,9 +153,16 @@ const RegistroCliente = () => {
                   {error && <p className="text-danger">{error}</p>}
                   {success && <p className="text-success">{success}</p>}
 
-                  <div className="d-grid">
+                  <div className="d-grid mb-2">
                     <CButton type="submit" color="primary">
                       Registrarse
+                    </CButton>
+                  </div>
+
+                  {/* 👇 Botón para volver al login */}
+                  <div className="d-grid">
+                    <CButton color="secondary" onClick={() => navigate('/')}>
+                      ← Volver al Login
                     </CButton>
                   </div>
                 </CForm>

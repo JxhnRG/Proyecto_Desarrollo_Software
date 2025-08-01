@@ -10,14 +10,16 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-  CFormSelect,
-  CFormCheck
+  CFormSelect
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const CrearTrabajador = () => {
+  const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
     correo: '',
     username: '',
@@ -39,7 +41,6 @@ const CrearTrabajador = () => {
     e.preventDefault()
     try {
       const token = localStorage.getItem('accessToken')
-      console.log('Token:', token)
       await axios.post('http://localhost:8000/api/usuarios/admin/registrar/', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -51,6 +52,10 @@ const CrearTrabajador = () => {
       setError('Error al crear el usuario')
       setSuccess(null)
     }
+  }
+
+  const volverAlPanel = () => {
+    navigate('/paneladmin')
   }
 
   return (
@@ -141,11 +146,18 @@ const CrearTrabajador = () => {
                   {error && <p className="text-danger">{error}</p>}
                   {success && <p className="text-success">{success}</p>}
 
-                  <div className="d-grid">
+                  <div className="d-grid mb-3">
                     <CButton type="submit" color="success">
                       Crear Cuenta
                     </CButton>
                   </div>
+
+                  <div className="d-grid">
+                    <CButton color="secondary" onClick={volverAlPanel}>
+                      ← Volver al Panel de Admin
+                    </CButton>
+                  </div>
+
                 </CForm>
               </CCardBody>
             </CCard>

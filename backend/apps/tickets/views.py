@@ -3,24 +3,27 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils import timezone
 from datetime import date, timedelta 
+import random
+from django.db.models import Q
 
 from apps.tickets.models import Ticket, Turno
 from apps.tickets.serializers import TicketSerializer, TurnoSerializer
 from apps.punto_atencion.models import PuntoAtencion
 from apps.usuarios.models import Usuario
 
-# ✅ Función para calcular el tiempo estimado de espera
 def calcular_tiempo_espera(ticket):
-    # Cuenta cuántos tickets con el mismo punto, misma prioridad, en estado "esperando" y creados antes que este.
+    # ✅ Filtra tickets de la misma sede y prioridad, en estado 'esperando', emitidos antes
     tickets_adelante = Ticket.objects.filter(
         punto=ticket.punto,
         prioridad=ticket.prioridad,
-        estado='esperando',
-        fecha_emision__lt=ticket.fecha_emision
-    ).count()
+        estado='esperando'
+    ).filter(
+        Q(fecha_emision__lt=ticket.fecha_emision) |
+        Q(fecha_emision=ticket.fecha_emision, id__lt=ticket.id)  # seguridad por ID
+    ).order_by('fecha_emision', 'id')
 
-    # Tiempo estimado: 5 minutos por persona en fila
-    tiempo_estimado = timedelta(minutes=5 * tickets_adelante)
+    # ✅ Cada persona delante suma 2 minutos
+    tiempo_estimado = timedelta(minutes=2 * tickets_adelante.count())
     return tiempo_estimado
 
 # ✅ Vista para crear un ticket asociado al usuario autenticado
@@ -67,10 +70,11 @@ class CrearTicketAPIView(APIView):
         codigo_ticket = f"{prefijo}-{total:02d}"
 
         # ✅ Punto de atención
-        punto = PuntoAtencion.objects.first()
-        if not punto:
-            return Response({"error": "No hay puntos de atención disponibles"}, status=400)
+        puntos = PuntoAtencion.objects.all()
+        if not puntos:
+          return Response({"error": "No hay puntos de atención disponibles"}, status=400)
 
+        punto = random.choice(puntos)
         # ✅ Crear el ticket
         ticket = Ticket.objects.create(
             usuario=user,
@@ -183,7 +187,6 @@ class CancelarMiTicketAPIView(APIView):
 class ListarTodosLosTicketsView(generics.ListAPIView):
     queryset = Ticket.objects.all().order_by('-fecha_emision')  # opcional: más recientes primero
     serializer_class = TicketSerializer
-<<<<<<< HEAD
     permission_classes = []  # sin autenticación por ahora, puedes cambiar a [permissions.IsAdminUser]  
     
 class CancelarTicketView(APIView):
@@ -213,6 +216,3 @@ class MarcarAtendiendoView(APIView):
 
         except Ticket.DoesNotExist:
             return Response({'error': 'Ticket no encontrado'}, status=status.HTTP_404_NOT_FOUND)
-=======
-    permission_classes = []  # sin autenticación por ahora, puedes cambiar a [permissions.IsAdminUser]  
->>>>>>> 41cb762939c50b5773b21d9a3ae822ade603cbe8
