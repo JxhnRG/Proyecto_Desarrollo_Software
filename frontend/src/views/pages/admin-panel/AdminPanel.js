@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   CCard,
   CCardBody,
@@ -6,15 +6,22 @@ import {
   CContainer,
   CRow,
   CCol,
-  CButton
+  CButton,
+  CCollapse
 } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
+import EstadisticasPunto from '../../../components/EstadisticasDetalladas'
 
 const AdminPanel = () => {
   const navigate = useNavigate()
+  const [mostrarEstadisticas, setMostrarEstadisticas] = useState(false)
 
   const irACrearTrabajador = () => {
     navigate('/creartrabajador')
+  }
+
+  const toggleEstadisticas = () => {
+    setMostrarEstadisticas(!mostrarEstadisticas)
   }
 
   return (
@@ -36,9 +43,24 @@ const AdminPanel = () => {
           </CCard>
 
           <CCard className="mb-4">
-            <CCardHeader><strong>🏢 Estadísticas por Punto</strong></CCardHeader>
+            <CCardHeader>
+              <strong>🏢 Estadísticas por Punto</strong>
+            </CCardHeader>
             <CCardBody>
-              <p>Visualice estadísticas por punto de atención.</p>
+              <div className="d-flex justify-content-between align-items-center">
+                <p className="mb-0">Visualice estadísticas detalladas por punto de atención.</p>
+                <CButton 
+                  color="info" 
+                  variant="outline" 
+                  onClick={toggleEstadisticas}
+                >
+                  {mostrarEstadisticas ? '🔼 Ocultar Estadísticas' : '📊 Ver Estadísticas'}
+                </CButton>
+              </div>
+              <CCollapse visible={mostrarEstadisticas}>
+                <hr className="my-3" />
+                <EstadisticasPunto />
+              </CCollapse>
             </CCardBody>
           </CCard>
 
