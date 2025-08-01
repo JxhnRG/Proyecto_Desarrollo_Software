@@ -118,7 +118,13 @@ const GestionTrabajador = () => {
           <button
             className="btn btn-primary"
             disabled={!ticketSeleccionado}
-            onClick={() => navigate('/atencion')}
+            onClick={() => {
+              if (ticketSeleccionado?.id) {
+                navigate(`/tickets/${ticketSeleccionado.id}/atencion`)
+              } else {
+                alert('Error: El ticket seleccionado no tiene un ID válido')
+              }
+            }}
           >
             Atender
           </button>

@@ -10,6 +10,7 @@ from apps.tickets.models import Ticket, Turno
 from apps.tickets.serializers import TicketSerializer, TurnoSerializer
 from apps.punto_atencion.models import PuntoAtencion
 from apps.usuarios.models import Usuario
+from apps.tickets.serializers import TicketRespuestaSerializer
 
 def calcular_tiempo_espera(ticket):
     # ✅ Filtra tickets de la misma sede y prioridad, en estado 'esperando', emitidos antes
@@ -216,3 +217,15 @@ class MarcarAtendiendoView(APIView):
 
         except Ticket.DoesNotExist:
             return Response({'error': 'Ticket no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+class TicketRespuestaView(generics.RetrieveUpdateAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketRespuestaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        ticket = self.get_object()
+        serializer = self.get_serializer(ticket, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

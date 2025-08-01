@@ -3,6 +3,7 @@ from .models import Ticket, Turno
 from apps.tickets.utils import calcular_tiempo_espera
 
 class TicketSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     codigo_ticket = serializers.CharField(read_only=True)
     punto_nombre = serializers.CharField(source='punto.nombre', read_only=True)
     posicion_en_fila = serializers.SerializerMethodField()
@@ -10,6 +11,7 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = [
+            'id',
             'codigo_ticket',
             'prioridad',
             'punto_nombre',
@@ -45,3 +47,8 @@ class TicketConEsperaSerializer(serializers.ModelSerializer):
         if tiempo.total_seconds() == 0:
             tiempo = timedelta(minutes=5)
         return int(tiempo.total_seconds())
+class TicketRespuestaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ['id','codigo_ticket', 'punto', 'prioridad', 'descripcion', 'respuesta']
+        depth = 1  # Para mostrar nombre del punto de atención si es FK

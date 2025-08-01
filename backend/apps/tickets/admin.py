@@ -3,4 +3,3 @@ from .models import Ticket, Turno
 
 # Register your models here.
 admin.site.register(Ticket)
-admin.site.register(Turno)
