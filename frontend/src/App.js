@@ -58,44 +58,19 @@ const App = () => {
       >
         <Routes>
           <Route exact path="/" name="Login Page" element={<Login />} />
-          <Route
-            exact
-            path="/creartrabajador"
-            name="Crear Trabajador"
-            element={<CrearTrabajador />}
-          />
+          <Route exact path="/creartrabajador" name="Crear Trabajador" element={<CrearTrabajador />} />
           <Route exact path="/gestionturnos" name="gestion Turno" element={<GestionTurnos />} />
-          <Route
-            exact
-            path="/seleccionacceso"
-            name="Seleccion Acceso"
-            element={<SeleccionAcceso />}
-          />
+          <Route exact path="/seleccionacceso" name="Seleccion Acceso" element={<SeleccionAcceso />} />
           <Route exact path="/accesocliente" name="Acceso Cliente" element={<AccesoCliente />} />
-          <Route
-            exact
-            path="/registroclientes"
-            name="Registro Clientes"
-            element={<RegistroClientes />}
-          />
+          <Route exact path="/registroclientes" name="Registro Clientes" element={<RegistroClientes />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
           <Route path="*" name="Home" element={<DefaultLayout />} />
           <Route exact path="/sala-espera" name="Sala de Espera" element={<SalaDeEspera />} />
           <Route exact path="/atencion" name="Atención" element={<Atencion />} />
-          <Route
-            exact
-            path="/ticket-finalizado"
-            name="FinalizarTicket"
-            element={<FinalizarTicket />}
-          />
-          <Route
-            exact
-            path="/gestiontrabajador"
-            name="Gestion Trabajador"
-            element={<GestionTrabajadorPage />}
-          />
+          <Route exact path="/ticket-finalizado" name="FinalizarTicket" element={<FinalizarTicket />} />
+          <Route exact path="/gestiontrabajador" name="Gestion Trabajador" element={<GestionTrabajadorPage />} />
           <Route exact path="/seleccionadmin" name="Seleccion Admin" element={<SeleccionAdmin />} />
           <Route exact path="/paneladmin" name="Panel Admin" element={<AdminPanel />} />
           <Route path="/tickets/:id/atencion" element={<AtencionUsuario />} />

@@ -16,7 +16,7 @@ import {
   CBadge,
   CProgress,
   CProgressBar,
-  CButton
+  CButton,
 } from '@coreui/react'
 import axiosInstance from '../axiosInstance'
 
@@ -33,11 +33,11 @@ const EstadisticasPunto = () => {
     try {
       setLoading(true)
       setError(null)
-      
+
       console.log('Cargando estadísticas...')
       const response = await axiosInstance.get('/api/punto-atencion/estadisticas/')
       console.log('Respuesta recibida:', response.data)
-      
+
       if (response.data && response.data.success) {
         setEstadisticas(response.data.estadisticas || [])
       } else {
@@ -45,7 +45,7 @@ const EstadisticasPunto = () => {
       }
     } catch (err) {
       console.error('Error al cargar estadísticas:', err)
-      
+
       if (err.response) {
         // El servidor respondió con un código de error
         if (err.response.status === 401) {
@@ -55,11 +55,15 @@ const EstadisticasPunto = () => {
         } else if (err.response.status >= 500) {
           setError('Error interno del servidor. Intente nuevamente.')
         } else {
-          setError(`Error del servidor: ${err.response.status} - ${err.response.data?.error || 'Error desconocido'}`)
+          setError(
+            `Error del servidor: ${err.response.status} - ${err.response.data?.error || 'Error desconocido'}`,
+          )
         }
       } else if (err.request) {
         // La petición fue enviada pero no se recibió respuesta
-        setError('Error de conexión al servidor. Verifique que el servidor esté ejecutándose en http://localhost:8000')
+        setError(
+          'Error de conexión al servidor. Verifique que el servidor esté ejecutándose en http://localhost:8000',
+        )
       } else {
         // Algo más pasó
         setError('Error inesperado: ' + err.message)
@@ -71,11 +75,16 @@ const EstadisticasPunto = () => {
 
   const getBadgeColor = (estado) => {
     switch (estado) {
-      case 'esperando': return 'warning'
-      case 'atendiendo': return 'primary'
-      case 'finalizados': return 'success'
-      case 'cancelados': return 'danger'
-      default: return 'secondary'
+      case 'esperando':
+        return 'warning'
+      case 'atendiendo':
+        return 'primary'
+      case 'finalizados':
+        return 'success'
+      case 'cancelados':
+        return 'danger'
+      default:
+        return 'secondary'
     }
   }
 
@@ -108,11 +117,7 @@ const EstadisticasPunto = () => {
   }
 
   if (estadisticas.length === 0) {
-    return (
-      <CAlert color="info">
-        No hay datos de estadísticas disponibles.
-      </CAlert>
-    )
+    return <CAlert color="info">No hay datos de estadísticas disponibles.</CAlert>
   }
 
   return (
@@ -145,7 +150,9 @@ const EstadisticasPunto = () => {
               <CCol sm={6} md={3}>
                 <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
                   <div className="text-muted small">Tiempo Promedio</div>
-                  <div className="fs-5 fw-semibold">{punto.resumen.tiempo_promedio_atencion} min</div>
+                  <div className="fs-5 fw-semibold">
+                    {punto.resumen.tiempo_promedio_atencion} min
+                  </div>
                 </div>
               </CCol>
               <CCol sm={6} md={3}>
@@ -170,9 +177,10 @@ const EstadisticasPunto = () => {
                   </CTableHead>
                   <CTableBody>
                     {Object.entries(punto.tickets_por_estado).map(([estado, cantidad]) => {
-                      const porcentaje = punto.resumen.total_tickets > 0 
-                        ? ((cantidad / punto.resumen.total_tickets) * 100).toFixed(1) 
-                        : 0
+                      const porcentaje =
+                        punto.resumen.total_tickets > 0
+                          ? ((cantidad / punto.resumen.total_tickets) * 100).toFixed(1)
+                          : 0
                       return (
                         <CTableRow key={estado}>
                           <CTableDataCell>
@@ -183,10 +191,7 @@ const EstadisticasPunto = () => {
                           <CTableDataCell>{cantidad}</CTableDataCell>
                           <CTableDataCell>
                             <CProgress thin>
-                              <CProgressBar 
-                                color={getBadgeColor(estado)} 
-                                value={porcentaje}
-                              />
+                              <CProgressBar color={getBadgeColor(estado)} value={porcentaje} />
                             </CProgress>
                             {porcentaje}%
                           </CTableDataCell>
@@ -214,9 +219,14 @@ const EstadisticasPunto = () => {
                       </CTableDataCell>
                       <CTableDataCell>{punto.tickets_por_prioridad.prioritarios}</CTableDataCell>
                       <CTableDataCell>
-                        {punto.resumen.total_tickets > 0 
-                          ? ((punto.tickets_por_prioridad.prioritarios / punto.resumen.total_tickets) * 100).toFixed(1)
-                          : 0}%
+                        {punto.resumen.total_tickets > 0
+                          ? (
+                              (punto.tickets_por_prioridad.prioritarios /
+                                punto.resumen.total_tickets) *
+                              100
+                            ).toFixed(1)
+                          : 0}
+                        %
                       </CTableDataCell>
                     </CTableRow>
                     <CTableRow>
@@ -225,9 +235,13 @@ const EstadisticasPunto = () => {
                       </CTableDataCell>
                       <CTableDataCell>{punto.tickets_por_prioridad.normales}</CTableDataCell>
                       <CTableDataCell>
-                        {punto.resumen.total_tickets > 0 
-                          ? ((punto.tickets_por_prioridad.normales / punto.resumen.total_tickets) * 100).toFixed(1)
-                          : 0}%
+                        {punto.resumen.total_tickets > 0
+                          ? (
+                              (punto.tickets_por_prioridad.normales / punto.resumen.total_tickets) *
+                              100
+                            ).toFixed(1)
+                          : 0}
+                        %
                       </CTableDataCell>
                     </CTableRow>
                   </CTableBody>
@@ -276,7 +290,7 @@ const EstadisticasPunto = () => {
                   </CTableHead>
                   <CTableBody>
                     {punto.tickets_por_dia.map((dia) => {
-                      const maxTickets = Math.max(...punto.tickets_por_dia.map(d => d.tickets))
+                      const maxTickets = Math.max(...punto.tickets_por_dia.map((d) => d.tickets))
                       const porcentaje = maxTickets > 0 ? (dia.tickets / maxTickets) * 100 : 0
                       return (
                         <CTableRow key={dia.fecha}>
@@ -284,10 +298,7 @@ const EstadisticasPunto = () => {
                           <CTableDataCell>{dia.tickets}</CTableDataCell>
                           <CTableDataCell>
                             <CProgress thin>
-                              <CProgressBar 
-                                color="info" 
-                                value={porcentaje}
-                              />
+                              <CProgressBar color="info" value={porcentaje} />
                             </CProgress>
                           </CTableDataCell>
                         </CTableRow>

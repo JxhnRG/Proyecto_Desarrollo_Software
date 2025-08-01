@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../../axiosInstance'
-import { CCard, CCardBody, CContainer, CRow, CCol, CButton } from '@coreui/react'
+import { CCard, CCardBody, CContainer, CRow, CCol, CButton, CAlert } from '@coreui/react'
 
 const SalaDeEspera = () => {
   const [ticket, setTicket] = useState(null)
   const [tiempoRestante, setTiempoRestante] = useState(null)
   const [yaAvisado, setYaAvisado] = useState(false)
+  const [anuncio, setAnuncio] = useState(null)
 
   const imagenesPublicidad = ['/ads/ad1.png', '/ads/ad2.png', '/ads/ad3.png', '/ads/ad4.jpg']
   const [indicePublicidad, setIndicePublicidad] = useState(0)
@@ -14,13 +15,13 @@ const SalaDeEspera = () => {
 
   const marcarComoAtendiendo = async () => {
     try {
-      console.log('Marcando ticket como atendiendo:', ticket.codigo_ticket)
       await api.post(`/tickets/${ticket.codigo_ticket}/marcar-atendiendo/`)
     } catch (error) {
-      console.error('Error al marcar el ticket como atendiendo:', error.response?.data || error.message)
+      console.error('Error al marcar como atendiendo:', error.response?.data || error.message)
     }
   }
 
+  // Obtener ticket del usuario
   useEffect(() => {
     const fetchTicket = async () => {
       try {
@@ -41,8 +42,8 @@ const SalaDeEspera = () => {
 
         setTicket(ultimoTicket)
 
-        // ⚠️ Reducido a 120 segundos para pruebas
-        const segundos = ultimoTicket.tiempo_estimado_segundos || 120
+        const posicion = parseInt(ultimoTicket.posicion_en_fila) || 1
+        const segundos = posicion * 2 * 60
         setTiempoRestante(segundos)
       } catch (error) {
         console.error('Error al obtener ticket:', error)
@@ -53,6 +54,7 @@ const SalaDeEspera = () => {
     fetchTicket()
   }, [navigate])
 
+  // Contador de tiempo
   useEffect(() => {
     if (tiempoRestante === null) return
 
@@ -76,6 +78,7 @@ const SalaDeEspera = () => {
     return () => clearInterval(intervalo)
   }, [tiempoRestante, yaAvisado, ticket])
 
+  // Cambio de publicidad cada 15s
   useEffect(() => {
     const intervaloPublicidad = setInterval(() => {
       setIndicePublicidad((prev) => (prev + 1) % imagenesPublicidad.length)
@@ -83,6 +86,26 @@ const SalaDeEspera = () => {
 
     return () => clearInterval(intervaloPublicidad)
   }, [])
+
+  // Obtener anuncio más reciente cada 5 segundos
+  useEffect(() => {
+    const fetchAnuncio = async () => {
+      try {
+        const res = await api.get('/punto-atencion/anuncios/actual/')
+
+        if (res.data && res.data.mensaje !== anuncio) {
+          setAnuncio(res.data.mensaje)
+        }
+      } catch (err) {
+        console.error('Error al obtener anuncio:', err)
+      }
+    }
+
+    const interval = setInterval(fetchAnuncio, 5000)
+    fetchAnuncio()
+
+    return () => clearInterval(interval)
+  }, [anuncio])
 
   const cancelarTicketYRedirigir = async () => {
     try {
@@ -104,20 +127,32 @@ const SalaDeEspera = () => {
       <CContainer>
         <CRow className="align-items-center">
           <CCol lg={2} className="d-none d-lg-block text-center">
-            <img src={imagenesPublicidad[indicePublicidad]} alt="Publicidad izquierda" className="img-fluid rounded shadow" />
+            <img
+              src={imagenesPublicidad[indicePublicidad]}
+              alt="Publicidad izquierda"
+              className="img-fluid rounded shadow"
+            />
           </CCol>
 
           <CCol xs={12} lg={8}>
             <CCard>
               <CCardBody>
                 <h2>🎫 Sala de Espera</h2>
+
+                {anuncio && (
+                  <CAlert color="info" className="text-center">
+                    📢 <strong>Anuncio:</strong> {anuncio}
+                  </CAlert>
+                )}
+
                 <p><strong>Tu código:</strong> {ticket.codigo_ticket}</p>
                 <p><strong>Sede asignada:</strong> {ticket.punto_nombre || 'No disponible'}</p>
                 <p><strong>Prioridad:</strong> {ticket.prioridad ? '✅ Sí' : '❌ No'}</p>
                 <p><strong>Posición en fila:</strong> {ticket.posicion_en_fila}</p>
 
                 <p className="fs-4 mt-4">
-                  ⏳ Tiempo estimado restante: {minutos.toString().padStart(2, '0')}:{segundos.toString().padStart(2, '0')}
+                  ⏳ Tiempo estimado restante: {minutos.toString().padStart(2, '0')}:
+                  {segundos.toString().padStart(2, '0')}
                 </p>
 
                 <CButton color="danger" onClick={cancelarTicketYRedirigir}>
@@ -127,12 +162,20 @@ const SalaDeEspera = () => {
             </CCard>
 
             <div className="d-block d-lg-none text-center mt-4">
-              <img src={imagenesPublicidad[indicePublicidad]} alt="Publicidad móvil" className="img-fluid rounded shadow" />
+              <img
+                src={imagenesPublicidad[indicePublicidad]}
+                alt="Publicidad móvil"
+                className="img-fluid rounded shadow"
+              />
             </div>
           </CCol>
 
           <CCol lg={2} className="d-none d-lg-block text-center">
-            <img src={imagenesPublicidad[(indicePublicidad + 1) % imagenesPublicidad.length]} alt="Publicidad derecha" className="img-fluid rounded shadow" />
+            <img
+              src={imagenesPublicidad[(indicePublicidad + 1) % imagenesPublicidad.length]}
+              alt="Publicidad derecha"
+              className="img-fluid rounded shadow"
+            />
           </CCol>
         </CRow>
       </CContainer>

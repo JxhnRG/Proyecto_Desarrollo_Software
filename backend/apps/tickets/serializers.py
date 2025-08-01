@@ -1,23 +1,26 @@
 from rest_framework import serializers
 from .models import Ticket, Turno
 from apps.tickets.utils import calcular_tiempo_espera
+from datetime import date, timedelta 
+from rest_framework import serializers
+from apps.tickets.models import Ticket
 
 class TicketSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
     codigo_ticket = serializers.CharField(read_only=True)
     punto_nombre = serializers.CharField(source='punto.nombre', read_only=True)
     posicion_en_fila = serializers.SerializerMethodField()
+    tiempo_estimado_segundos = serializers.SerializerMethodField()
 
     class Meta:
         model = Ticket
         fields = [
-            'id',
             'codigo_ticket',
             'prioridad',
             'punto_nombre',
             'posicion_en_fila',
             'estado',
             'fecha_emision',
+            'tiempo_estimado_segundos', 
         ]
 
     def get_posicion_en_fila(self, obj):
@@ -27,26 +30,23 @@ class TicketSerializer(serializers.ModelSerializer):
             estado='esperando',
             fecha_emision__lt=obj.fecha_emision
         ).count()
-        return tickets_adelante
+        return tickets_adelante + 1  # Se suma 1 para incluirse a sí mismo
+
+    def get_tiempo_estimado_segundos(self, obj):
+        tickets_adelante = Ticket.objects.filter(
+            punto=obj.punto,
+            prioridad=obj.prioridad,
+            estado='esperando',
+            fecha_emision__lt=obj.fecha_emision
+        ).count()
+        return (tickets_adelante + 1) * 120  # 2 minutos por ticket
 
 
 class TurnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Turno
         fields = '__all__'
-class TicketConEsperaSerializer(serializers.ModelSerializer):
-    punto_nombre = serializers.CharField(source='punto.nombre', read_only=True)
-    tiempo_estimado_segundos = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Ticket
-        fields = ['codigo_ticket', 'estado', 'prioridad', 'punto_nombre', 'fecha_emision', 'tiempo_estimado_segundos']
-
-    def get_tiempo_estimado_segundos(self, ticket):
-        tiempo = calcular_tiempo_espera(ticket)
-        if tiempo.total_seconds() == 0:
-            tiempo = timedelta(minutes=5)
-        return int(tiempo.total_seconds())
 class TicketRespuestaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket

@@ -4,27 +4,23 @@ from rest_framework.response import Response
 from django.utils import timezone
 from datetime import date, timedelta 
 import random
-from django.db.models import Q
-
 from apps.tickets.models import Ticket, Turno
-from apps.tickets.serializers import TicketSerializer, TurnoSerializer
+from apps.tickets.serializers import TicketSerializer, TurnoSerializer,TicketRespuestaSerializer
 from apps.punto_atencion.models import PuntoAtencion
 from apps.usuarios.models import Usuario
-from apps.tickets.serializers import TicketRespuestaSerializer
 
+# ✅ Función para calcular el tiempo estimado de espera
 def calcular_tiempo_espera(ticket):
-    # ✅ Filtra tickets de la misma sede y prioridad, en estado 'esperando', emitidos antes
+    # Cuenta cuántos tickets con el mismo punto, misma prioridad, en estado "esperando" y creados antes que este.
     tickets_adelante = Ticket.objects.filter(
         punto=ticket.punto,
         prioridad=ticket.prioridad,
-        estado='esperando'
-    ).filter(
-        Q(fecha_emision__lt=ticket.fecha_emision) |
-        Q(fecha_emision=ticket.fecha_emision, id__lt=ticket.id)  # seguridad por ID
-    ).order_by('fecha_emision', 'id')
+        estado='esperando',
+        fecha_emision__lt=ticket.fecha_emision
+    ).count()
 
-    # ✅ Cada persona delante suma 2 minutos
-    tiempo_estimado = timedelta(minutes=2 * tickets_adelante.count())
+    # Tiempo estimado: 5 minutos por persona en fila
+    tiempo_estimado = timedelta(minutes=5 * tickets_adelante)
     return tiempo_estimado
 
 # ✅ Vista para crear un ticket asociado al usuario autenticado
@@ -71,9 +67,9 @@ class CrearTicketAPIView(APIView):
         codigo_ticket = f"{prefijo}-{total:02d}"
 
         # ✅ Punto de atención
-        puntos = PuntoAtencion.objects.all()
+        puntos = list(PuntoAtencion.objects.all())
         if not puntos:
-          return Response({"error": "No hay puntos de atención disponibles"}, status=400)
+            return Response({"error": "No hay puntos de atención disponibles"}, status=400)
 
         punto = random.choice(puntos)
         # ✅ Crear el ticket
@@ -159,7 +155,7 @@ class FinalizarMiTicketAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        ticket = Ticket.objects.filter(usuario=request.user, estado='atendiendo').first()
+        ticket = Ticket.objects.filter(usuario=request.user, estado='esperando').first()
         if not ticket:
             return Response({'error': 'No tienes un ticket activo'}, status=404)
 
@@ -173,23 +169,6 @@ class FinalizarMiTicketAPIView(APIView):
         return Response({'mensaje': 'Ticket finalizado correctamente'}, status=200)
 
 # ✅ Método para cambiar el estado de un ticket de 'esperando' a 'cancelado'
-class CancelarMiTicketAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request):
-        ticket = Ticket.objects.filter(usuario=request.user, estado='esperando').first()
-        if not ticket:
-            return Response({'error': 'No tienes un ticket activo'}, status=404)
-
-        ticket.estado = 'cancelado'
-        ticket.save()
-        return Response({'mensaje': 'Ticket cancelado correctamente'}, status=200)
-
-class ListarTodosLosTicketsView(generics.ListAPIView):
-    queryset = Ticket.objects.all().order_by('-fecha_emision')  # opcional: más recientes primero
-    serializer_class = TicketSerializer
-    permission_classes = []  # sin autenticación por ahora, puedes cambiar a [permissions.IsAdminUser]  
-    
 class CancelarTicketView(APIView):
     def post(self, request, codigo_ticket):
         try:
@@ -204,28 +183,49 @@ class CancelarTicketView(APIView):
         ticket.save()
         return Response({'mensaje': 'Ticket cancelado correctamente'}, status=status.HTTP_200_OK)
     
-class MarcarAtendiendoView(APIView):
-    def post(self, request, codigo_ticket):
-        try:
-            ticket = Ticket.objects.get(codigo_ticket=codigo_ticket)
-            if ticket.estado != 'esperando':
-                return Response({'error': 'Solo se pueden atender tickets en espera'}, status=status.HTTP_400_BAD_REQUEST)
+class TiempoPromedioPorSedeAPIView(APIView):
+    permission_classes = [permissions.IsAdminUser]
 
-            ticket.estado = 'atendiendo'
-            ticket.save()
-            return Response({'mensaje': 'Ticket marcado como atendiendo'}, status=status.HTTP_200_OK)
+    def get(self, request, punto_id):
+        tickets = Ticket.objects.filter(
+            punto_id=punto_id,
+            estado__in=['cancelado', 'finalizado']
+        )
 
-        except Ticket.DoesNotExist:
-            return Response({'error': 'Ticket no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        if not tickets.exists():
+            return Response({'mensaje': 'No hay tickets para calcular promedio'}, status=404)
+
+        tiempos = []
+        for _ in tickets:
+            extra = random.randint(1, 30)
+            tiempo_total = timedelta(minutes=2, seconds=extra)
+            tiempos.append(tiempo_total.total_seconds())
+
+        promedio_segundos = int(sum(tiempos) / len(tiempos))
+        promedio_minutos = promedio_segundos // 60
+        promedio_solo_segundos = promedio_segundos % 60
+
+        return Response({
+            'sede': PuntoAtencion.objects.get(id=punto_id).nombre,
+            'cantidad_tickets': len(tiempos),
+            'tiempo_promedio_segundos': promedio_segundos,
+            'tiempo_formateado': f'{promedio_minutos} minutos y {promedio_solo_segundos} segundos'
+        })
+    #
 class TicketRespuestaView(generics.RetrieveUpdateAPIView):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketRespuestaSerializer
-    permission_classes = [permissions.IsAuthenticated]
+        queryset = Ticket.objects.all()
+        serializer_class = TicketRespuestaSerializer
+        permission_classes = [permissions.IsAuthenticated]
 
-    def patch(self, request, *args, **kwargs):
-        ticket = self.get_object()
-        serializer = self.get_serializer(ticket, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        def patch(self, request, *args, **kwargs):
+          ticket = self.get_object()
+          serializer = self.get_serializer(ticket, data=request.data, partial=True)
+          if serializer.is_valid():
+             serializer.save()
+             return Response(serializer.data)
+          return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+class TicketListAPIView(generics.ListAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = [permissions.IsAuthenticated]

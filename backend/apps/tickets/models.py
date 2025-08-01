@@ -42,7 +42,6 @@ class Ticket(models.Model):
     prioridad = models.BooleanField(default=False)
     # Descripcion del problema
     descripcion = models.TextField(null=True, blank=True)
-    respuesta = models.TextField(null=True, blank=True)
     def __str__(self):
         return self.codigo_ticket  # ✅ Muestra el código al imprimir el objeto
 

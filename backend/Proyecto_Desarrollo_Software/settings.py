@@ -82,25 +82,16 @@ WSGI_APPLICATION = 'Proyecto_Desarrollo_Software.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Configuración temporal para SQLite (para pruebas)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db_temp.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'proy_desarrollo',
+        'USER': 'postgres',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
-
-# Configuración original de PostgreSQL (comentada temporalmente)
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'ProyDesarrollo',
-#         'USER': 'postgres',
-#         'PASSWORD': 'projectds',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
 
 
 # Password validation
@@ -161,7 +152,6 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:3001",  # Agregado para el puerto 3001
 ]
 
 CORS_ALLOW_CREDENTIALS = True

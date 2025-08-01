@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/tickets/', include('apps.tickets.urls')),
     path('api/punto-atencion/', include('apps.punto_atencion.urls')),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+     path('api/punto/', include('apps.punto_atencion.urls')),
 ]

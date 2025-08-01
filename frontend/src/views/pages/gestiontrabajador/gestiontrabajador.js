@@ -33,10 +33,9 @@ const GestionTrabajador = () => {
 
   const fetchTickets = async () => {
     try {
-      const response = await api.get('/tickets/')
+      const response = await api.get('/tickets')
       const todosLosTickets = response.data
 
-      // Orden personalizado
       todosLosTickets.sort((a, b) => {
         const estadoA = estadosOrden[a.estado] ?? 99
         const estadoB = estadosOrden[b.estado] ?? 99
@@ -50,19 +49,23 @@ const GestionTrabajador = () => {
       setLoading(false)
     }
   }
+
   const cancelarTicketSeleccionado = async () => {
     if (!ticketSeleccionado || !ticketSeleccionado.codigo_ticket) {
       console.error('No hay ticket seleccionado o le falta ID')
       return
     }
 
-    console.log('Cancelando ticket con ID:', ticketSeleccionado.codigo_ticket) // Agregado
     try {
-      await api.post(`/tickets/${encodeURIComponent(ticketSeleccionado.codigo_ticket)}/cancelar/`)
+      const response = await api.post(
+        `/tickets/${encodeURIComponent(ticketSeleccionado.codigo_ticket)}/cancelar/`,
+      )
+
+      console.log('✅ Ticket cancelado:', response.data)
       fetchTickets()
       setTicketSeleccionado(null)
     } catch (error) {
-      console.error('Error al cancelar el ticket:', error)
+      console.error('❌ Error al cancelar el ticket:', error)
     }
   }
 
@@ -79,6 +82,8 @@ const GestionTrabajador = () => {
   return (
     <CCard>
       <CCardHeader>Tickets restantes</CCardHeader>
+
+      {/* Tabla con scroll */}
       <CCardBody style={{ maxHeight: '70vh', overflowY: 'auto' }}>
         <CTable striped hover responsive>
           <CTableHead>
@@ -92,7 +97,7 @@ const GestionTrabajador = () => {
           <CTableBody>
             {tickets.map((ticket) => (
               <CTableRow
-                key={ticket.id}
+                key={ticket.codigo_ticket} // <- usa codigo_ticket como clave única
                 style={{
                   cursor: 'pointer',
                   background: ticketSeleccionado?.id === ticket.id ? '#e9ecef' : 'inherit',
@@ -113,30 +118,18 @@ const GestionTrabajador = () => {
             ))}
           </CTableBody>
         </CTable>
-
-        <div className="d-flex justify-content-center gap-3 mt-3">
-          <button
-            className="btn btn-primary"
-            disabled={!ticketSeleccionado}
-            onClick={() => {
-              if (ticketSeleccionado?.id) {
-                navigate(`/tickets/${ticketSeleccionado.id}/atencion`)
-              } else {
-                alert('Error: El ticket seleccionado no tiene un ID válido')
-              }
-            }}
-          >
-            Atender
-          </button>
-          <button
-            className="btn btn-danger"
-            disabled={!ticketSeleccionado || ticketSeleccionado.estado !== 'esperando'}
-            onClick={cancelarTicketSeleccionado}
-          >
-            Cancelar Ticket
-          </button>
-        </div>
       </CCardBody>
+
+      {/* Botones fuera del scroll */}
+      <div className="d-flex justify-content-center gap-3 p-3 border-top">
+        <button
+          className="btn btn-danger"
+          disabled={!ticketSeleccionado || ticketSeleccionado.estado !== 'esperando'}
+          onClick={cancelarTicketSeleccionado}
+        >
+          Cancelar Ticket
+        </button>
+      </div>
     </CCard>
   )
 }

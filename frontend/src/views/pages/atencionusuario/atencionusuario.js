@@ -19,7 +19,7 @@ const AtencionUsuario = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token')
+    const token = localStorage.getItem('accesstoken')
 
     axios
       .get(`/api/tickets/tickets/${id}/respuesta/`, {
@@ -39,7 +39,7 @@ const AtencionUsuario = () => {
   }, [id])
 
   const finalizarAtencion = () => {
-    const token = localStorage.getItem('access_token')
+    const token = localStorage.getItem('accesstoken')
 
     axios
       .patch(
