@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../../axiosInstance'
 
 import {
+  CButton,
   CCard,
   CCardBody,
-  CContainer,
-  CRow,
   CCol,
+  CContainer,
   CForm,
   CFormTextarea,
-  CButton,
+  CRow,
 } from '@coreui/react'
 
 const Atencion = () => {
@@ -32,7 +32,7 @@ const Atencion = () => {
         }
 
         if (data.length === 0) {
-          navigate('/gestionturnos')
+          navigate('/ticket-finalizado')
         } else {
           // Usa el más reciente
           const ultimoTicket = data[data.length - 1]
@@ -56,7 +56,7 @@ const Atencion = () => {
     try {
       await api.post('/tickets/finalizar-mi-ticket/', { problema }) // usa axiosInstance
       alert('✅ Atención finalizada correctamente.')
-      navigate('/gestionturnos')
+      navigate('/ticket-finalizado')
     } catch (error) {
       console.error('Error al finalizar atención:', error)
       alert('Ocurrió un error al finalizar la atención.')

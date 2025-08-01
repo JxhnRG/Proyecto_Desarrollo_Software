@@ -19,7 +19,7 @@ const FinalizarTicket = () => {
   const handleLogout = () => {
     localStorage.removeItem('access')  // O el método que uses para manejar tokens
     localStorage.removeItem('refresh')
-    navigate('/login')
+    navigate('/')
   }
 
   return (

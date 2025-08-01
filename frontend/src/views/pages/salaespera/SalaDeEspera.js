@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../../axiosInstance'
-
 import { CCard, CCardBody, CContainer, CRow, CCol, CButton } from '@coreui/react'
 
 const SalaDeEspera = () => {
   const [ticket, setTicket] = useState(null)
   const [tiempoRestante, setTiempoRestante] = useState(null)
-  const [yaAvisado, setYaAvisado] = useState(false) // ✅ bandera para evitar alerta duplicada
+  const [yaAvisado, setYaAvisado] = useState(false)
+
+  const imagenesPublicidad = ['/ads/ad1.png', '/ads/ad2.png', '/ads/ad3.png', '/ads/ad4.jpg']
+  const [indicePublicidad, setIndicePublicidad] = useState(0)
   const navigate = useNavigate()
+
+  const marcarComoAtendiendo = async () => {
+    try {
+      console.log('Marcando ticket como atendiendo:', ticket.codigo_ticket)
+      await api.post(`/tickets/${ticket.codigo_ticket}/marcar-atendiendo/`)
+    } catch (error) {
+      console.error('Error al marcar el ticket como atendiendo:', error.response?.data || error.message)
+    }
+  }
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -16,14 +27,7 @@ const SalaDeEspera = () => {
         const response = await api.get('/tickets/mis-tickets/')
         const data = response.data
 
-        if (!Array.isArray(data)) {
-          console.error('Respuesta inesperada del servidor:', data)
-          alert('Hubo un problema al cargar tu ticket.')
-          navigate('/gestionturnos')
-          return
-        }
-
-        if (data.length === 0) {
+        if (!Array.isArray(data) || data.length === 0) {
           navigate('/gestionturnos')
           return
         }
@@ -37,7 +41,8 @@ const SalaDeEspera = () => {
 
         setTicket(ultimoTicket)
 
-        const segundos = (ultimoTicket.posicion_en_fila + 1) * 5 * 60
+        // ⚠️ Reducido a 20 segundos para pruebas
+        const segundos = 20
         setTiempoRestante(segundos)
       } catch (error) {
         console.error('Error al obtener ticket:', error)
@@ -48,7 +53,6 @@ const SalaDeEspera = () => {
     fetchTicket()
   }, [navigate])
 
-  // ⏳ Temporizador
   useEffect(() => {
     if (tiempoRestante === null) return
 
@@ -56,12 +60,12 @@ const SalaDeEspera = () => {
       setTiempoRestante((prev) => {
         if (prev <= 1) {
           clearInterval(intervalo)
-          eliminarTicketYRedirigir()
+          marcarComoAtendiendo().then(() => navigate('/atencion'))
           return 0
         }
 
-        if (prev === 60 && !yaAvisado) {
-          alert('⚠️ Queda 1 minuto para tu atención. Por favor, prepárate.')
+        if (prev === 5 && !yaAvisado) {
+          alert('⚠️ Quedan 5 segundos para tu atención. Prepárate.')
           setYaAvisado(true)
         }
 
@@ -70,7 +74,15 @@ const SalaDeEspera = () => {
     }, 1000)
 
     return () => clearInterval(intervalo)
-  }, [tiempoRestante, yaAvisado])
+  }, [tiempoRestante, yaAvisado, ticket])
+
+  useEffect(() => {
+    const intervaloPublicidad = setInterval(() => {
+      setIndicePublicidad((prev) => (prev + 1) % imagenesPublicidad.length)
+    }, 15000)
+
+    return () => clearInterval(intervaloPublicidad)
+  }, [])
 
   const cancelarTicketYRedirigir = async () => {
     try {
@@ -90,27 +102,22 @@ const SalaDeEspera = () => {
   return (
     <div className="bg-light min-vh-100 d-flex align-items-center justify-content-center">
       <CContainer>
-        <CRow className="justify-content-center">
-          <CCol md={8}>
+        <CRow className="align-items-center">
+          <CCol lg={2} className="d-none d-lg-block text-center">
+            <img src={imagenesPublicidad[indicePublicidad]} alt="Publicidad izquierda" className="img-fluid rounded shadow" />
+          </CCol>
+
+          <CCol xs={12} lg={8}>
             <CCard>
               <CCardBody>
                 <h2>🎫 Sala de Espera</h2>
-                <p>
-                  <strong>Tu código:</strong> {ticket.codigo_ticket}
-                </p>
-                <p>
-                  <strong>Sede asignada:</strong> {ticket.punto_nombre || 'No disponible'}
-                </p>
-                <p>
-                  <strong>Prioridad:</strong> {ticket.prioridad ? '✅ Sí' : '❌ No'}
-                </p>
-                <p>
-                  <strong>Posición en fila:</strong> {ticket.posicion_en_fila}
-                </p>
+                <p><strong>Tu código:</strong> {ticket.codigo_ticket}</p>
+                <p><strong>Sede asignada:</strong> {ticket.punto_nombre || 'No disponible'}</p>
+                <p><strong>Prioridad:</strong> {ticket.prioridad ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>Posición en fila:</strong> {ticket.posicion_en_fila}</p>
 
                 <p className="fs-4 mt-4">
-                  ⏳ Tiempo estimado restante: {minutos.toString().padStart(2, '0')}:
-                  {segundos.toString().padStart(2, '0')}
+                  ⏳ Tiempo estimado restante: {minutos.toString().padStart(2, '0')}:{segundos.toString().padStart(2, '0')}
                 </p>
 
                 <CButton color="danger" onClick={cancelarTicketYRedirigir}>
@@ -118,6 +125,14 @@ const SalaDeEspera = () => {
                 </CButton>
               </CCardBody>
             </CCard>
+
+            <div className="d-block d-lg-none text-center mt-4">
+              <img src={imagenesPublicidad[indicePublicidad]} alt="Publicidad móvil" className="img-fluid rounded shadow" />
+            </div>
+          </CCol>
+
+          <CCol lg={2} className="d-none d-lg-block text-center">
+            <img src={imagenesPublicidad[(indicePublicidad + 1) % imagenesPublicidad.length]} alt="Publicidad derecha" className="img-fluid rounded shadow" />
           </CCol>
         </CRow>
       </CContainer>

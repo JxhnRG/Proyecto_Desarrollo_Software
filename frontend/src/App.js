@@ -24,6 +24,7 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 const SalaDeEspera = React.lazy(() => import('./views/pages/salaespera/SalaDeEspera'))
 const Atencion = React.lazy(() => import('./views/pages/atencion/Atencion'))
 const FinalizarTicket = React.lazy(() => import('./views/pages/finalizarticket/FinalizarTicket'))
+const GestionTrabajadorPage = React.lazy(() => import('./views/pages/gestiontrabajador/GestionTrabajador.js'))
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
   const storedTheme = useSelector((state) => state.theme)
@@ -52,7 +53,7 @@ const App = () => {
         }
       >
         <Routes>
-          <Route exact path="/login" name="Login Page" element={<Login />} />
+          <Route exact path="/" name="Login Page" element={<Login />} />
           <Route exact path="/creartrabajador" name="Crear Trabajador" element={<CrearTrabajador />} />
           <Route exact path="/gestionturnos" name="gestion Turno" element={<GestionTurnos />} />
           <Route exact path="/seleccionacceso" name="Seleccion Acceso" element={<SeleccionAcceso />} />
@@ -65,7 +66,7 @@ const App = () => {
           <Route exact path="/sala-espera" name="Sala de Espera" element={<SalaDeEspera />} />
           <Route exact path="/atencion" name="Atención" element={<Atencion />} />
           <Route exact path="/ticket-finalizado" name="FinalizarTicket" element={<FinalizarTicket />} />
-
+          <Route exact path="/gestiontrabajador" name="Gestion Trabajador" element={<GestionTrabajadorPage />} />
         </Routes>
       </Suspense>
     </HashRouter>

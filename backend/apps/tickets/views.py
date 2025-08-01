@@ -154,7 +154,7 @@ class FinalizarMiTicketAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        ticket = Ticket.objects.filter(usuario=request.user, estado='esperando').first()
+        ticket = Ticket.objects.filter(usuario=request.user, estado='atendiendo').first()
         if not ticket:
             return Response({'error': 'No tienes un ticket activo'}, status=404)
 
@@ -179,3 +179,36 @@ class CancelarMiTicketAPIView(APIView):
         ticket.estado = 'cancelado'
         ticket.save()
         return Response({'mensaje': 'Ticket cancelado correctamente'}, status=200)
+
+class ListarTodosLosTicketsView(generics.ListAPIView):
+    queryset = Ticket.objects.all().order_by('-fecha_emision')  # opcional: más recientes primero
+    serializer_class = TicketSerializer
+    permission_classes = []  # sin autenticación por ahora, puedes cambiar a [permissions.IsAdminUser]  
+    
+class CancelarTicketView(APIView):
+    def post(self, request, codigo_ticket):
+        try:
+            ticket = Ticket.objects.get(codigo_ticket=codigo_ticket)
+        except Ticket.DoesNotExist:
+            return Response({'error': 'Ticket no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        if ticket.estado != 'esperando':
+            return Response({'error': 'Solo se pueden cancelar tickets en estado esperando'}, status=status.HTTP_400_BAD_REQUEST)
+
+        ticket.estado = 'cancelado'
+        ticket.save()
+        return Response({'mensaje': 'Ticket cancelado correctamente'}, status=status.HTTP_200_OK)
+    
+class MarcarAtendiendoView(APIView):
+    def post(self, request, codigo_ticket):
+        try:
+            ticket = Ticket.objects.get(codigo_ticket=codigo_ticket)
+            if ticket.estado != 'esperando':
+                return Response({'error': 'Solo se pueden atender tickets en espera'}, status=status.HTTP_400_BAD_REQUEST)
+
+            ticket.estado = 'atendiendo'
+            ticket.save()
+            return Response({'mensaje': 'Ticket marcado como atendiendo'}, status=status.HTTP_200_OK)
+
+        except Ticket.DoesNotExist:
+            return Response({'error': 'Ticket no encontrado'}, status=status.HTTP_404_NOT_FOUND)

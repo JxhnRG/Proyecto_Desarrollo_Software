@@ -54,11 +54,11 @@ const Login = () => {
       if (user.rol === 'admin') {
         window.location.href = '/#/creartrabajador'
       } else if (user.rol === 'trabajador') {
-        window.location.href = '/#/gestionturnos'
+        window.location.href = '/#/gestiontrabajador'
       } else if (user.rol === 'cliente') {
         window.location.href = '/#/gestionturnos'
       } else {
-        window.location.href = '/#/dashboard'
+        window.location.href = '/'
       }
 
     } catch (err) {
