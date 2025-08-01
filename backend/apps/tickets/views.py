@@ -183,6 +183,7 @@ class CancelarMiTicketAPIView(APIView):
 class ListarTodosLosTicketsView(generics.ListAPIView):
     queryset = Ticket.objects.all().order_by('-fecha_emision')  # opcional: más recientes primero
     serializer_class = TicketSerializer
+<<<<<<< HEAD
     permission_classes = []  # sin autenticación por ahora, puedes cambiar a [permissions.IsAdminUser]  
     
 class CancelarTicketView(APIView):
@@ -212,3 +213,6 @@ class MarcarAtendiendoView(APIView):
 
         except Ticket.DoesNotExist:
             return Response({'error': 'Ticket no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+=======
+    permission_classes = []  # sin autenticación por ahora, puedes cambiar a [permissions.IsAdminUser]  
+>>>>>>> 41cb762939c50b5773b21d9a3ae822ade603cbe8

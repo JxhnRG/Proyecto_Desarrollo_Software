@@ -24,7 +24,11 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 const SalaDeEspera = React.lazy(() => import('./views/pages/salaespera/SalaDeEspera'))
 const Atencion = React.lazy(() => import('./views/pages/atencion/Atencion'))
 const FinalizarTicket = React.lazy(() => import('./views/pages/finalizarticket/FinalizarTicket'))
+<<<<<<< HEAD
 const GestionTrabajadorPage = React.lazy(() => import('./views/pages/gestiontrabajador/GestionTrabajador.js'))
+=======
+const GestionTrabajadorPage = React.lazy(() => import('./views/pages/gestiontrabajador/GestionTrabajador'))
+>>>>>>> 41cb762939c50b5773b21d9a3ae822ade603cbe8
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
   const storedTheme = useSelector((state) => state.theme)

@@ -32,7 +32,11 @@ const Atencion = () => {
         }
 
         if (data.length === 0) {
+<<<<<<< HEAD
           navigate('/ticket-finalizado')
+=======
+          navigate('/gestiontrabajador')
+>>>>>>> 41cb762939c50b5773b21d9a3ae822ade603cbe8
         } else {
           // Usa el más reciente
           const ultimoTicket = data[data.length - 1]
@@ -56,7 +60,11 @@ const Atencion = () => {
     try {
       await api.post('/tickets/finalizar-mi-ticket/', { problema }) // usa axiosInstance
       alert('✅ Atención finalizada correctamente.')
+<<<<<<< HEAD
       navigate('/ticket-finalizado')
+=======
+      navigate('/gestiontrabajador')
+>>>>>>> 41cb762939c50b5773b21d9a3ae822ade603cbe8
     } catch (error) {
       console.error('Error al finalizar atención:', error)
       alert('Ocurrió un error al finalizar la atención.')
